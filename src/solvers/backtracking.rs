@@ -111,7 +111,7 @@ impl Sudoku {
     }
 
     /// Try to fill the position with values from `start` to 9.
-    /// 
+    ///
     /// Return Ok() if position filled with some value, otherwise None.
     fn fill_position(&mut self, pos: usize, start: u8) -> Option<()> {
         for val in start..SIDE as u8 + 1 {
@@ -140,7 +140,9 @@ impl Sudoku {
     /// Returns a position of a next empty cell or None if all all cells are filled.
     fn next_empty(&self) -> Option<usize> {
         for i in 0..SIZE {
-            if self.field[i] == EMPTY {return Some(i)}
+            if self.field[i] == EMPTY {
+                return Some(i);
+            }
         }
         None
     }
@@ -158,22 +160,22 @@ impl Sudoku {
         loop {
             let pos_idx = match pos {
                 Some(v) => v,
-                _ => break
+                _ => break,
             };
             match self.fill_position(pos_idx, start_val) {
                 None => {
                     match self.rollback() {
                         Ok(log_entry) => {
                             pos = Some(log_entry.pos);
-                            start_val = log_entry.val+1;
+                            start_val = log_entry.val + 1;
                             // continue
-                        },
+                        }
                         Err(_) => {
                             // Nothing to rollback. Sudoku is unsolvable.
-                            break
+                            break;
                         }
                     }
-                },
+                }
                 Some(_) => {
                     start_val = 1;
                     pos = self.next_empty()
@@ -182,7 +184,7 @@ impl Sudoku {
         }
         match self.solved() {
             true => Ok(()),
-            false => Err(Unsolvable{})
+            false => Err(Unsolvable {}),
         }
     }
 }
@@ -192,15 +194,19 @@ impl fmt::Display for Sudoku {
         writeln!(f, "{}", "=====================================")?;
         for i in 0..SIDE {
             for j in 0..SIDE {
-                write!(f, "| {} ", match self.field[SIDE * i + j] {
-                    0 => " ".to_string(),
-                    v => v.to_string()
-                })?;
+                write!(
+                    f,
+                    "| {} ",
+                    match self.field[SIDE * i + j] {
+                        0 => " ".to_string(),
+                        v => v.to_string(),
+                    }
+                )?;
             }
             write!(f, "|\n")?;
-            match i == SIDE-1 || (i != 0 && i % 3 == 2) {
+            match i == SIDE - 1 || (i != 0 && i % 3 == 2) {
                 false => writeln!(f, "{}", "|-----------|-----------|-----------|")?,
-                true => writeln!(f, "{}", "=====================================")?
+                true => writeln!(f, "{}", "=====================================")?,
             }
         }
         Ok(())
@@ -269,15 +275,9 @@ fn test_field_helper() -> Sudoku {
 
 fn solvable_field_helper() -> Sudoku {
     let field: Vec<u8> = vec![
-        5, 3, 0, 0, 7, 0, 0, 0, 0,
-        6, 0, 0, 1, 9, 5, 0, 0, 0, 
-        0, 9, 8, 0, 0, 0, 0, 6, 0, 
-        8, 0, 0, 0, 6, 0, 0, 0, 3,
-        4, 0, 0, 8, 0, 3, 0, 0, 1,
-        7, 0, 0, 0, 2, 0, 0, 0, 6,
-        0, 6, 0, 0, 0, 0, 2, 8, 0,
-        0, 0, 0, 4, 1, 9, 0, 0, 5,
-        0, 0, 0, 0, 8, 0, 0, 7, 9
+        5, 3, 0, 0, 7, 0, 0, 0, 0, 6, 0, 0, 1, 9, 5, 0, 0, 0, 0, 9, 8, 0, 0, 0, 0, 6, 0, 8, 0, 0,
+        0, 6, 0, 0, 0, 3, 4, 0, 0, 8, 0, 3, 0, 0, 1, 7, 0, 0, 0, 2, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0,
+        2, 8, 0, 0, 0, 0, 4, 1, 9, 0, 0, 5, 0, 0, 0, 0, 8, 0, 0, 7, 9,
     ];
     Sudoku::new(field.into_iter()).unwrap()
 }
@@ -367,15 +367,9 @@ fn fill_position() {
 #[test]
 fn fill_position_9_is_a_valid_choice() {
     let field: Vec<u8> = vec![
-        5, 3, 1, 2, 7, 4, 8, 0, 0,
-        6, 0, 0, 1, 9, 5, 0, 0, 0, 
-        0, 9, 8, 0, 0, 0, 0, 6, 0, 
-        8, 0, 0, 0, 6, 0, 0, 0, 3,
-        4, 0, 0, 8, 0, 3, 0, 0, 1,
-        7, 0, 0, 0, 2, 0, 0, 0, 6,
-        0, 6, 0, 0, 0, 0, 2, 8, 0,
-        0, 0, 0, 4, 1, 9, 0, 0, 5,
-        0, 0, 0, 0, 8, 0, 0, 7, 9
+        5, 3, 1, 2, 7, 4, 8, 0, 0, 6, 0, 0, 1, 9, 5, 0, 0, 0, 0, 9, 8, 0, 0, 0, 0, 6, 0, 8, 0, 0,
+        0, 6, 0, 0, 0, 3, 4, 0, 0, 8, 0, 3, 0, 0, 1, 7, 0, 0, 0, 2, 0, 0, 0, 6, 0, 6, 0, 0, 0, 0,
+        2, 8, 0, 0, 0, 0, 4, 1, 9, 0, 0, 5, 0, 0, 0, 0, 8, 0, 0, 7, 9,
     ];
     let mut s = Sudoku::new(field.into_iter()).unwrap();
 
