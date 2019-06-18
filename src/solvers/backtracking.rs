@@ -1,4 +1,5 @@
 extern crate log;
+use std::fmt::Write;
 
 use std::fmt;
 
